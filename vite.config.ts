@@ -5,15 +5,9 @@ import {
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { getLoadContext } from "./load-context";
-import { globalStoragePlugin } from "./vitePlugin/globalStoragePlugin";
+import { sessionContextPlugin } from "session-context/vite";
 
 export default defineConfig({
-  ssr: {
-    target: "webworker",
-    resolve: {
-      conditions: ["worker", "workerd", "browser"],
-    },
-  },
   plugins: [
     remixCloudflareDevProxy({ getLoadContext }),
     remix({
@@ -24,6 +18,6 @@ export default defineConfig({
       },
     }),
     tsconfigPaths(),
-    globalStoragePlugin(),
+    sessionContextPlugin(),
   ],
 });

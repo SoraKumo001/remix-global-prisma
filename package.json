@@ -24,7 +24,8 @@
     "@remix-run/react": "^2.12.0",
     "isbot": "^4.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "session-context": "^0.0.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241004.0",

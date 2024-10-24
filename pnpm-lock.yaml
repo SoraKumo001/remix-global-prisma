@@ -29,6 +29,9 @@ importers:
       react-dom:
         specifier: ^18.2.0
         version: 18.3.1(react@18.3.1)
+      session-context:
+        specifier: ^0.0.3
+        version: 0.0.3
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20241004.0
@@ -3254,6 +3257,9 @@ packages:
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
     engines: {node: '>= 0.8.0'}
+
+  session-context@0.0.3:
+    resolution: {integrity: sha512-XZ6ED/IeYbwn/Yxn87LakjKiB0ToQG1ObUZlcGSzbMcCYeUpNj3OrezvB5sZ1d+ZEdHOEMC+AyBukQ8WozgaHQ==}
 
   set-cookie-parser@2.7.0:
     resolution: {integrity: sha512-lXLOiqpkUumhRdFF3k1osNXCy9akgx/dyPZ5p8qAg9seJzXr5ZrlqZuWIMuY6ejOsVLE6flJ5/h3lsn57fQ/PQ==}
@@ -7465,6 +7471,8 @@ snapshots:
       send: 0.19.0
     transitivePeerDependencies:
       - supports-color
+
+  session-context@0.0.3: {}
 
   set-cookie-parser@2.7.0: {}
 

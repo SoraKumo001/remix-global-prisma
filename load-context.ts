@@ -1,6 +1,6 @@
 import { AppLoadContext } from "@remix-run/cloudflare";
+import { getSessionContext } from "session-context";
 import { type PlatformProxy } from "wrangler";
-import { getGlobalStore } from "./app/libs/globalStorage";
 
 type Cloudflare = Omit<PlatformProxy<Env>, "dispose">;
 
@@ -16,7 +16,7 @@ type GetLoadContext = (args: {
 }) => AppLoadContext;
 
 export const getLoadContext: GetLoadContext = ({ context }) => {
-  const store = getGlobalStore();
+  const store = getSessionContext();
   store.env = context.cloudflare.env;
   return context;
 };

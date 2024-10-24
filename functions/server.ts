@@ -1,13 +1,12 @@
 import { createRequestHandler, ServerBuild } from "@remix-run/cloudflare";
 import * as build from "../build/server";
-import { createGlobalStorage } from "../app/libs/globalStorage";
 import { getLoadContext } from "../load-context";
+import { runSession } from "session-context";
 
 const handler = createRequestHandler(build as unknown as ServerBuild);
 
 const fetch = async (request: Request, env: Env, ctx: ExecutionContext) => {
-  const storage = createGlobalStorage();
-  return storage.run({}, () => {
+  return runSession(() => {
     const context = getLoadContext({
       request,
       context: {
