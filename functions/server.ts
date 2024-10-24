@@ -1,7 +1,7 @@
 import { createRequestHandler, ServerBuild } from "@remix-run/cloudflare";
 import * as build from "../build/server";
-import { createGlobalStorage } from "~/libs/globalStorage";
-import { getLoadContext } from "load-context";
+import { createGlobalStorage } from "../app/libs/globalStorage";
+import { getLoadContext } from "../load-context";
 
 const handler = createRequestHandler(build as unknown as ServerBuild);
 
