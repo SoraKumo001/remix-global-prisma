@@ -10,3 +10,9 @@ export const getPrisma = () => {
   }
   return store.prisma;
 };
+
+export const prisma = new Proxy<PrismaClient>({} as never, {
+  get(_target: unknown, props: keyof PrismaClient) {
+    return getPrisma()[props];
+  },
+});
