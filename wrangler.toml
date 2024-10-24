@@ -1,0 +1,15 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "cloudflare-workers-remix"
+compatibility_date = "2024-09-25"
+compatibility_flags = ["nodejs_compat"]
+main = "./functions/server.ts"
+assets = { directory = "./build/client" }
+minify = true
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB" # i.e. available in your Worker on env.DB
+database_name = "prisma-demo-db"
+database_id = "03b35086-e3b9-4c54-94ac-fac685f207c5"
