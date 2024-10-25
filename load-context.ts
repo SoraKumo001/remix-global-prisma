@@ -15,21 +15,21 @@ type GetLoadContext = (args: {
   context: { cloudflare: Cloudflare };
 }) => AppLoadContext;
 
-const processProxy = new Proxy(process, {
-  get(target, name) {
-    if (name === "env") {
-      const store = getSessionContext<{ env: Env }>();
-      return store.env;
-    }
-    return target[name as keyof typeof target];
-  },
-});
+// const processProxy = new Proxy(process, {
+//   get(target, name) {
+//     if (name === "env") {
+//       const store = getSessionContext<{ env: Env }>();
+//       return store.env;
+//     }
+//     return target[name as keyof typeof target];
+//   },
+// });
 
 export const getLoadContext: GetLoadContext = ({ context }) => {
   const store = getSessionContext();
   store.env = context.cloudflare.env;
-  if (process !== processProxy) {
-    process = processProxy;
-  }
+  // if (process !== processProxy) {
+  //   process = processProxy;
+  // }
   return context;
 };
