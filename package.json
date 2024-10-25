@@ -15,7 +15,9 @@
     "cf-typegen": "wrangler types",
     "prisma:generate": "prisma generate",
     "d1:migrate:local": "wrangler d1 migrations apply prisma-demo-db --local",
-    "d1:migrate:remote": "wrangler d1 migrations apply prisma-demo-db --remote"
+    "d1:migrate:remote": "wrangler d1 migrations apply prisma-demo-db --remote",
+    "size-test:development": "wrangler deploy --dry-run",
+    "size-test:production": " next-exec -c deploy -- wrangler deploy --dry-run"
   },
   "dependencies": {
     "@prisma/adapter-d1": "^5.21.1",

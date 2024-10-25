@@ -63,7 +63,7 @@ type GetLoadContext = (args: {
 
 export const getLoadContext: GetLoadContext = ({ context }) => {
   const store = getSessionContext();
-  store.env = context.cloudflare.env; // Save the environment variables
+  store.env = context.cloudflare.env;
   return context;
 };
 ```
