@@ -15,6 +15,8 @@ const users = await prisma.user.findMany();
 
 - vite.config.ts
 
+Enabling SessionContext in Vite development mode.
+
 ```js
 import {
   vitePlugin as remix,
@@ -36,80 +38,15 @@ export default defineConfig({
       },
     }),
     tsconfigPaths(),
+    // Middleware to add 'runSession'
     sessionContextPlugin(),
   ],
 });
 ```
 
-- load-context.ts
-
-```ts
-import { AppLoadContext } from "@remix-run/cloudflare";
-import { getSessionContext } from "session-context";
-import { type PlatformProxy } from "wrangler";
-
-type Cloudflare = Omit<PlatformProxy<Env>, "dispose">;
-
-declare module "@remix-run/cloudflare" {
-  interface AppLoadContext {
-    cloudflare: Cloudflare;
-  }
-}
-
-type GetLoadContext = (args: {
-  request: Request;
-  context: { cloudflare: Cloudflare };
-}) => AppLoadContext;
-
-export const getLoadContext: GetLoadContext = ({ context }) => {
-  const store = getSessionContext();
-  store.env = context.cloudflare.env;
-  return context;
-};
-```
-
-- app/libs/prisma.ts
-
-```ts
-import { PrismaClient } from "@prisma/client";
-import { PrismaD1 } from "@prisma/adapter-d1";
-import { getSessionContext } from "session-context";
-
-export const getPrisma = () => {
-  const store = getSessionContext<{ prisma?: PrismaClient; env: Env }>();
-  if (!store.prisma) {
-    const adapter = new PrismaD1(store.env.DB);
-    store.prisma = new PrismaClient({ adapter });
-  }
-  return store.prisma;
-};
-
-export const prisma = new Proxy<PrismaClient>({} as never, {
-  get(_target: unknown, props: keyof PrismaClient) {
-    return getPrisma()[props];
-  },
-});
-```
-
-- app/routes/\_index.tsx
-
-```tsx
-import { useLoaderData } from "@remix-run/react";
-import { prisma } from "~/libs/prisma";
-
-export default function Index() {
-  const value = useLoaderData<string>();
-  return <div>{value}</div>;
-}
-
-export async function loader(): Promise<string> {
-  //You can directly use the PrismaClient instance received from the module
-  const users = await prisma.user.findMany();
-  return JSON.stringify(users);
-}
-```
-
 - functions/server.ts
+
+Enable SessionContext during Production runtime.
 
 ```ts
 import { createRequestHandler, ServerBuild } from "@remix-run/cloudflare";
@@ -145,7 +82,83 @@ export default {
 };
 ```
 
+- load-context.ts
+
+Enabling `process.env` to be used within a session
+
+```ts
+import { AppLoadContext } from "@remix-run/cloudflare";
+import { setProcessEnv } from "session-context";
+import { type PlatformProxy } from "wrangler";
+
+type Cloudflare = Omit<PlatformProxy<Env>, "dispose">;
+
+declare module "@remix-run/cloudflare" {
+  interface AppLoadContext {
+    cloudflare: Cloudflare;
+  }
+}
+
+type GetLoadContext = (args: {
+  request: Request;
+  context: { cloudflare: Cloudflare };
+}) => AppLoadContext;
+
+export const getLoadContext: GetLoadContext = ({ context }) => {
+  // Enable context.cloudflare.env in process.env
+  setProcessEnv(context.cloudflare.env);
+  return context;
+};
+```
+
+- app/libs/prisma.ts
+
+Make a PrismaClient instance available in the session with the name prisma
+
+```ts
+import { PrismaClient } from "@prisma/client";
+import { PrismaD1 } from "@prisma/adapter-d1";
+import { getSessionContext } from "session-context";
+
+export const getPrisma = () => {
+  const store = getSessionContext<{ prisma?: PrismaClient }>();
+  if (!store.prisma) {
+    const adapter = new PrismaD1((process.env as unknown as Env).DB);
+    store.prisma = new PrismaClient({ adapter });
+  }
+  return store.prisma;
+};
+
+export const prisma = new Proxy<PrismaClient>({} as never, {
+  get(_target: unknown, props: keyof PrismaClient) {
+    return getPrisma()[props];
+  },
+});
+```
+
+- app/routes/\_index.tsx
+
+Examples of prisma usage
+
+```tsx
+import { useLoaderData } from "@remix-run/react";
+import { prisma } from "~/libs/prisma";
+
+export default function Index() {
+  const value = useLoaderData<string>();
+  return <div>{value}</div>;
+}
+
+export async function loader(): Promise<string> {
+  //You can directly use the PrismaClient instance received from the module
+  const users = await prisma.user.findMany();
+  return JSON.stringify(users);
+}
+```
+
 - wrangler.toml
+
+Enable `nodejs_compat`.
 
 ```toml
 #:schema node_modules/wrangler/config-schema.json

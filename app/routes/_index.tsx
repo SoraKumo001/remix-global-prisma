@@ -7,7 +7,6 @@ export default function Index() {
 }
 
 export async function loader(): Promise<string> {
-  console.log(process.env);
   //You can directly use the PrismaClient instance received from the module
   const users = await prisma.user.findMany();
   return JSON.stringify(users);

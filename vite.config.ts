@@ -18,6 +18,7 @@ export default defineConfig({
       },
     }),
     tsconfigPaths(),
+    // Middleware to add 'runSession'
     sessionContextPlugin(),
   ],
 });
